@@ -2635,53 +2635,53 @@ func (b *ORMBuilder) parseServices(file *protogen.File) {
 
 		if !genSvc.autogen {
 			b.suppressWarn = true
-		}
+		} else {
+			for _, method := range service.Methods {
+				input := method.Input
+				output := method.Output
+				methodName := string(method.Desc.Name())
+				var verb, fmName, baseType string
+				var follows bool
 
-		for _, method := range service.Methods {
-			input := method.Input
-			output := method.Output
-			methodName := string(method.Desc.Name())
-			var verb, fmName, baseType string
-			var follows bool
+				if strings.HasPrefix(methodName, createService) {
+					verb = createService
+					follows, baseType = b.followsCreateConventions(input, output, createService)
+				} else if strings.HasPrefix(methodName, readService) {
+					verb = readService
+					follows, baseType = b.followsReadConventions(input, output, readService)
+				} else if strings.HasPrefix(methodName, updateSetService) {
+					verb = updateSetService
+					follows, baseType, fmName = b.followsUpdateSetConventions(input, output, updateSetService)
+				} else if strings.HasPrefix(methodName, updateService) {
+					verb = updateService
+					follows, baseType, fmName = b.followsUpdateConventions(input, output, updateService)
+				} else if strings.HasPrefix(methodName, deleteSetService) {
+					verb = deleteSetService
+					follows, baseType = b.followsDeleteSetConventions(input, output, method)
+				} else if strings.HasPrefix(methodName, deleteService) {
+					verb = deleteService
+					follows, baseType = b.followsDeleteConventions(input, output, method)
+				} else if strings.HasPrefix(methodName, listService) {
+					verb = listService
+					follows, baseType = b.followsListConventions(input, output, listService)
+				}
 
-			if strings.HasPrefix(methodName, createService) {
-				verb = createService
-				follows, baseType = b.followsCreateConventions(input, output, createService)
-			} else if strings.HasPrefix(methodName, readService) {
-				verb = readService
-				follows, baseType = b.followsReadConventions(input, output, readService)
-			} else if strings.HasPrefix(methodName, updateSetService) {
-				verb = updateSetService
-				follows, baseType, fmName = b.followsUpdateSetConventions(input, output, updateSetService)
-			} else if strings.HasPrefix(methodName, updateService) {
-				verb = updateService
-				follows, baseType, fmName = b.followsUpdateConventions(input, output, updateService)
-			} else if strings.HasPrefix(methodName, deleteSetService) {
-				verb = deleteSetService
-				follows, baseType = b.followsDeleteSetConventions(input, output, method)
-			} else if strings.HasPrefix(methodName, deleteService) {
-				verb = deleteService
-				follows, baseType = b.followsDeleteConventions(input, output, method)
-			} else if strings.HasPrefix(methodName, listService) {
-				verb = listService
-				follows, baseType = b.followsListConventions(input, output, listService)
-			}
+				genMethod := autogenMethod{
+					Method:            method,
+					ccName:            methodName,
+					inType:            input,
+					outType:           output,
+					fieldMaskName:     fmName,
+					verb:              verb,
+					followsConvention: follows,
+					baseType:          baseType,
+				}
 
-			genMethod := autogenMethod{
-				Method:            method,
-				ccName:            methodName,
-				inType:            input,
-				outType:           output,
-				fieldMaskName:     fmName,
-				verb:              verb,
-				followsConvention: follows,
-				baseType:          baseType,
-			}
+				genSvc.methods = append(genSvc.methods, genMethod)
 
-			genSvc.methods = append(genSvc.methods, genMethod)
-
-			if genMethod.verb != "" && b.isOrmable(genMethod.baseType) {
-				b.getOrmable(genMethod.baseType).Methods = append(b.getOrmable(genMethod.baseType).Methods, &genMethod)
+				if genMethod.verb != "" && b.isOrmable(genMethod.baseType) {
+					b.getOrmable(genMethod.baseType).Methods = append(b.getOrmable(genMethod.baseType).Methods, &genMethod)
+				}
 			}
 		}
 
