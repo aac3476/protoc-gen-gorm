@@ -5,10 +5,10 @@ import (
 	"testing"
 	"time"
 
+	"github.com/aac3476/protoc-gen-gorm/types"
 	"github.com/golang/protobuf/jsonpb"
 	"github.com/golang/protobuf/ptypes/wrappers"
 	"github.com/google/go-cmp/cmp"
-	"github.com/infobloxopen/protoc-gen-gorm/types"
 	"google.golang.org/protobuf/testing/protocmp"
 	durationpb "google.golang.org/protobuf/types/known/durationpb"
 	timestamppb "google.golang.org/protobuf/types/known/timestamppb"

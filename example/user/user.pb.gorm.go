@@ -3,11 +3,11 @@ package user
 import (
 	context "context"
 	fmt "fmt"
+	errors "github.com/aac3476/protoc-gen-gorm/errors"
 	auth "github.com/infobloxopen/atlas-app-toolkit/auth"
 	gateway "github.com/infobloxopen/atlas-app-toolkit/gateway"
 	gorm1 "github.com/infobloxopen/atlas-app-toolkit/gorm"
 	resource "github.com/infobloxopen/atlas-app-toolkit/gorm/resource"
-	errors "github.com/infobloxopen/protoc-gen-gorm/errors"
 	gorm "github.com/jinzhu/gorm"
 	field_mask "google.golang.org/genproto/protobuf/field_mask"
 	timestamppb "google.golang.org/protobuf/types/known/timestamppb"
